@@ -38,7 +38,8 @@ defmodule Redis.Mixfile do
     [
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.0.0-rc.3"},
-      {:mariaex, "~> 0.7.4"}
+      {:mariaex, "~> 0.7.4"},
+      {:redix, ">= 0.0.0"}
     ]
   end
 

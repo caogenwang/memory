@@ -2,7 +2,7 @@ defmodule DfsMaster.Repo.Search.Service do#操作获取数据的数据库Repo
     use Ecto.Schema
     import Ecto.Query
     import Ecto.Changeset
-    use Timex
+    # use Timex
     require Logger
     alias DfsMaster.Repo
 
