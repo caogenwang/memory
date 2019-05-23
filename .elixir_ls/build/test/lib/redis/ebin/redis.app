@@ -1,9 +1,0 @@
-{application,redis,
-             [{applications,[kernel,stdlib,elixir,logger,runtime_tools,
-                             postgrex,ecto]},
-              {description,"redis"},
-              {modules,['Elixir.Redis','Elixir.Redis.Application',
-                        'Elixir.Redis.DataCase','Elixir.Redis.Repo']},
-              {registered,[]},
-              {vsn,"0.0.1"},
-              {mod,{'Elixir.Redis.Application',[]}}]}.
