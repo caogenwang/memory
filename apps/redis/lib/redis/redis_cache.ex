@@ -184,7 +184,12 @@ defmodule Redis.Cache.Service do
           acc++[key,Map.get(map,key)]
           end)
       cmd = ["HMSET","#{hash_key}"] ++ value
-      acc++[cmd]++[["EXPIRE","#{hash_key}",second]]
+      if second != 0 do
+        acc++[cmd]++[["EXPIRE","#{hash_key}",second]]
+      else
+        acc++[cmd]
+      end
+
     end)
 
     Logger.warn "cmd_all:#{inspect cmd_all}"
