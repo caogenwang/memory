@@ -67,7 +67,7 @@ defmodule Redis.Cache.Service do
     Redix.start_link(host: redis_url, port: port, password: password)
   end
 
-  def file_set(param,second) do
+  def file_set(param,second \\ 0) do
     key = param["id"]
     value = Poison.encode!(param)
     url = redis_select([])
@@ -77,7 +77,7 @@ defmodule Redis.Cache.Service do
     Logger.warn "value:#{inspect value}"
     what = Redix.command(conn, ["SET", "#{key}","#{value}"])
     if second != 0 do
-      expire_time(conn,"#{key}",60*60*12)
+      expire_time(conn,"#{key}",second)
     end
 
   end
@@ -98,7 +98,7 @@ defmodule Redis.Cache.Service do
     meta["#{key}"]
   end
 
-  def file_hset(param,second) do
+  def file_hset(param,second \\ 0) do
     hash_key = param["id"]
     keys = Map.keys(param)
     value =
@@ -112,7 +112,7 @@ defmodule Redis.Cache.Service do
     what = Redix.command(conn, cmd)
 
     if second != 0 do
-      expire_time(conn,"#{hash_key}",60*60*12)
+      expire_time(conn,"#{hash_key}",second)
     end
 
   end
@@ -165,7 +165,7 @@ defmodule Redis.Cache.Service do
     what = Redix.command(conn, cmd)
   end
 
-  def file_multi_set(param_list,second) when is_list(param_list) do
+  def file_multi_set(param_list,second \\ 0) when is_list(param_list) do
     Enum.map(param_list,fn param ->
       file_hset(param,second)
     end)
@@ -173,7 +173,7 @@ defmodule Redis.Cache.Service do
 
 
 
-  def file_pipeline_set(map_list,second) when is_list(map_list) do
+  def file_pipeline_set(map_list,second \\ 0) when is_list(map_list) do
 
     cmd_all =
     Enum.reduce(map_list,[],fn map ,acc->
@@ -203,5 +203,9 @@ defmodule Redis.Cache.Service do
   def file_pipeline_set(map_list,second) do
     Logger.warn "param has someting wrong!"
   end
+
+def key_value_set() do
+
+end
 
 end
