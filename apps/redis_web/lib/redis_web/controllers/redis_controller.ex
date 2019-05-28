@@ -11,8 +11,7 @@ defmodule RedisWeb.RedisController do
 
     conn |> json(ok(%{}))
   end
-  @spec info_get(any, map) :: :ok | {:error, any}
-  @spec info_get(Plug.Conn.t(), map) :: Plug.Conn.t()
+
   def info_get(conn, %{"id" => id} = meta) do
 
     Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
@@ -21,10 +20,13 @@ defmodule RedisWeb.RedisController do
     # w = Redis.Cache.Service.file_hget_all(meta["id"])
     # Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
     # #{inspect w}"
-
-    conn |> json(ok(%{meta: %{
-      version: to_string(Application.spec(:RedisWeb,:vsn))
-    }}))
+    w=%{"converted_by" => "convert_worker",
+    "file_size" => "366823", "height" => "842.25",
+    "host_name" => "dfs_store_001", "id" => "64135088",
+    "page_count" => "6", "version" => "1.2", "width" => "595.5",
+    "zip_size" => "680656"}
+    
+    conn |> json(ok(w))
   end
 
   def info_del(conn, %{"id" => id} = meta) do
@@ -36,9 +38,7 @@ defmodule RedisWeb.RedisController do
     # Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
     # #{inspect w}"
 
-    conn |> json(ok(%{meta: %{
-      version: to_string(Application.spec(:RedisWeb,:vsn))
-    }}))
+    conn |> json(ok(%{}))
   end
 
 
