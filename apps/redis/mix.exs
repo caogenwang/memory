@@ -39,7 +39,8 @@ defmodule Redis.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:ecto, "~> 2.1"},
       {:mariaex, "~> 0.8.3"},
-      {:redix, ">= 0.0.0"}
+      {:redix, ">= 0.0.0"},
+      {:poison, "~> 3.0"}
     ]
   end
 

@@ -16,9 +16,9 @@ defmodule Redis.Repo.Search.Service do#操作获取数据的数据库Repo
     def query(table) do
       from(
         u in queryTableFromOldDatabase(table),
-        where: u.id > ^0
+        where: u.id > ^0,
         # select: %{id: u.id,meta: u.meta},
-        # limit: ^limit
+        limit: ^1
       )
       |> Repo.all
     end

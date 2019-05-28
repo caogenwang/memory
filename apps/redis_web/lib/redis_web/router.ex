@@ -18,6 +18,7 @@ defmodule RedisWeb.Router do
 
     get "/", PageController, :index
     get "/hello",HelloController,:hello
+    get "/file_record",RedisController,:file_record
   end
 
   # Other scopes may use custom stacks.
