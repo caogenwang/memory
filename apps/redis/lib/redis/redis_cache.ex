@@ -228,15 +228,16 @@ def key_value_update(%{"key"=>key}=values) do
     values
     |> Map.keys()
     |> Enum.filter(fn key ->
-         !(key!="key")
+         key!="key"
      end)
-
+     Logger.warn "keys_value:#{inspect keys_value}"
       url = redis_select([])
       Logger.warn "url:#{inspect url["master"]}"
       conn = start_link(url["master"])
       Enum.map(keys_value,fn key_value ->
         cmd=["HSET",key,key_value,Map.get(values,key_value)]
         what = Redix.command(conn, cmd)
+        Logger.warn "what:#{inspect what}"
     end)
 end
 
