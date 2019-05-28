@@ -171,8 +171,10 @@ defmodule Redis.Cache.Service do
     end)
   end
 
-
-
+  @spec file_pipeline_set(any, any) ::
+          :ok
+          | [nil | binary | [nil | binary | [any] | integer | map] | integer | Redix.Error.t()]
+          | {:error, any}
   def file_pipeline_set(map_list,second \\ 0) when is_list(map_list) do
 
     cmd_all =
@@ -204,7 +206,55 @@ defmodule Redis.Cache.Service do
     Logger.warn "param has someting wrong!"
   end
 
-def key_value_set() do
+def key_value_set(%{"key"=>key,"expire"=>time}=values) do
+    key = values["key"]
+    expire_time = values["expire"]
+    what = key_value_hset(key,values,expire_time)
+end
+
+def key_value_get(%{"key"=>key}=values) do
+  key = values["key"]
+  what = file_hget_all(key)
+end
+
+def key_value_del(%{"key"=>key}=values) do
+  key = values["key"]
+  what = file_del(key)
+end
+
+def key_value_update(%{"key"=>key}=values) do
+    key=values["key"]
+    keys_value =
+    values
+    |> Map.keys()
+    |> Enum.filter(fn key ->
+         !(key!="key")
+     end)
+
+      url = redis_select([])
+      Logger.warn "url:#{inspect url["master"]}"
+      conn = start_link(url["master"])
+      Enum.map(keys_value,fn key_value ->
+        cmd=["HSET",key,key_value,Map.get(values,key_value)]
+        what = Redix.command(conn, cmd)
+    end)
+end
+
+def key_value_hset(key,values,second \\ 0) do
+  keys = Map.keys(values)
+  value =
+  Enum.reduce(keys,[],fn key,acc ->
+      acc++[key,Map.get(values,key)]
+      end)
+  cmd = ["HMSET","#{key}"] ++ value
+  url = redis_select([])
+  Logger.warn "url:#{inspect url["master"]}"
+  conn = start_link(url["master"])
+  what = Redix.command(conn, cmd)
+
+  if second != 0 do
+    expire_time(conn,"#{key}",second)
+  end
 
 end
 
