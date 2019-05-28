@@ -9,9 +9,7 @@ defmodule RedisWeb.RedisController do
     # Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
     # #{inspect w}"
 
-    conn |> json(ok(%{meta: %{
-      version: to_string(Application.spec(:RedisWeb,:vsn))
-    }}))
+    conn |> json(ok(%{}))
   end
   @spec info_get(any, map) :: :ok | {:error, any}
   @spec info_get(Plug.Conn.t(), map) :: Plug.Conn.t()
