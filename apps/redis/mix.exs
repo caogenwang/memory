@@ -40,7 +40,8 @@ defmodule Redis.Mixfile do
       {:ecto, "~> 2.1"},
       {:mariaex, "~> 0.8.3"},
       {:redix, ">= 0.0.0"},
-      {:poison, "~> 3.0"}
+      {:poison, "~> 3.0"},
+      {:httpoison, "~> 0.12"}
     ]
   end
 

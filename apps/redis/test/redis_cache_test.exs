@@ -123,4 +123,19 @@ defmodule Redis.Repo.Query do
   #   w = Redis.Cache.Service.redis_select([])
   #   Logger.warn "w:#{inspect w}"
   # end
+
+  test "add cache" do
+      addFileURL = "http://localhost:4000/redis/info_set"
+
+      meta_map = %{"converted_by" => "convert_worker",
+                  "file_size" => "366823", "height" => "842.25",
+                  "host_name" => "dfs_store_001", "id" => "64135088",
+                  "page_count" => "6", "version" => "1.2", "width" => "595.5",
+                  "zip_size" => "680656"}
+
+       what = HTTPoison.post(addFileURL, Poison.encode!(meta_map), [{"Content-Type", "application/json"}])
+       # addFileURL = "http://localhost:4000/info_set?id=64135088&converted_by=convert_worker&host_name=dfs_store_001"
+       # what = HTTPoison.get(addFileURL)
+      Logger.warn "what:#{inspect what}"
+  end
 end
