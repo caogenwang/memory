@@ -240,20 +240,20 @@ def key_value_update(%{"key"=>key}=values) do
     end)
 end
 
-def key_value_hset(key,values,second \\ 0) do
+def key_value_hset(k,values,second \\ 0) do
   keys = Map.keys(values)
   value =
   Enum.reduce(keys,[],fn key,acc ->
       acc++[key,Map.get(values,key)]
       end)
-  cmd = ["HMSET","#{key}"] ++ value
+  cmd = ["HMSET","#{k}"] ++ value
   url = redis_select([])
   Logger.warn "url:#{inspect url["master"]}"
   conn = start_link(url["master"])
   what = Redix.command(conn, cmd)
 
   if second != 0 do
-    expire_time(conn,"#{key}",second)
+    expire_time(conn,"#{k}",second)
   end
 
 end
