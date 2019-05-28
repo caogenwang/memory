@@ -175,7 +175,7 @@ defmodule Redis.Cache.Service do
           :ok
           | [nil | binary | [nil | binary | [any] | integer | map] | integer | Redix.Error.t()]
           | {:error, any}
-  def file_pipeline_set(map_list,second \\ 0) when is_list(map_list) do
+  def file_pipeline_set(map_list,second \\ 0) do
 
     cmd_all =
     Enum.reduce(map_list,[],fn map ,acc->
@@ -202,10 +202,6 @@ defmodule Redis.Cache.Service do
     what = Redix.pipeline!(conn, cmd_all)
   end
 
-  def file_pipeline_set(map_list,second) do
-    Logger.warn "param has someting wrong!"
-  end
-
 def key_value_set(%{"key"=>key,"expire"=>time}=values) do
     key = values["key"]
     expire_time = values["expire"]
@@ -227,8 +223,8 @@ def key_value_update(%{"key"=>key}=values) do
     keys_value =
     values
     |> Map.keys()
-    |> Enum.filter(fn key ->
-         key!="key"
+    |> Enum.filter(fn k ->
+         k != "key"
      end)
      Logger.warn "keys_value:#{inspect keys_value}"
       url = redis_select([])
