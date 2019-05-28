@@ -241,6 +241,17 @@ def key_value_update(%{"key"=>key}=values) do
     end)
 end
 
+@spec key_value_hset(any, map, any) ::
+        nil
+        | {:error,
+           atom
+           | %{
+               :__exception__ => any,
+               :__struct__ => Redix.ConnectionError | Redix.Error,
+               optional(:message) => binary,
+               optional(:reason) => atom
+             }}
+        | {:ok, nil | binary | [nil | binary | [any] | integer | map] | integer | Redix.Error.t()}
 def key_value_hset(k,values,second \\ 0) do
   keys = Map.keys(values)
   value =
