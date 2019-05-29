@@ -71,8 +71,6 @@ defmodule Redis.Cache.Service do
     value = Poison.encode!(param)
     conns = redis_select()
     Logger.warn "conn:#{inspect conns["master"]}"
-    Logger.warn "key:#{inspect key}"
-    Logger.warn "value:#{inspect value}"
     what = Redix.command(conns["master"], ["SET", "#{key}","#{value}"])
     if second != 0 do
       expire_time(conns["master"],"#{key}",second)
