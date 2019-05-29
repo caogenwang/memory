@@ -65,21 +65,21 @@ defmodule Redis.Repo.Query do
 
   # test "sentinel" do
 
-  #   redis_url = "redis://localhost:7001/"
+  #   redis_url = "redis://:123456@localhost:7001/1"
   #   {:ok, conn} = Redix.start_link(redis_url, name: :redis1)
   #   Logger.warn "conn:#{inspect conn}"
   #   w = Redix.command(conn,["SET","sentinel","success"])
   #   w = Redix.command(conn,["INFO","Replication"])
   #   Logger.warn "w:#{inspect w}"
 
-  #   redis_url = "redis://localhost:7002/"
+  #   redis_url = "redis://:123456@localhost:7002/1"
   #   {:ok, conn} = Redix.start_link(redis_url, name: :redis2)
   #   Logger.warn "ping:#{inspect Redix.command!(conn, ["PING"])}"
   #   Logger.warn "conn:#{inspect conn}"
   #   w = Redix.command(conn,["SET","sentinel","success"])
   #   Logger.warn "w:#{inspect w}"
 
-  #   redis_url = "redis://localhost:7003/"
+  #   redis_url = "redis://:123456@localhost:7003/2"
   #   {:ok, conn} = Redix.start_link(redis_url, name: :redis3)
   #   Logger.warn "ping:#{inspect Redix.command!(conn, ["PING"])}"
   #   Logger.warn "conn:#{inspect conn}"

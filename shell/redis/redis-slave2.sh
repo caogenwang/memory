@@ -35,6 +35,8 @@ docker run -d \
 --env ENV_FILE=$ENV_FILE \
 redis:3.2 \
 --bind 0.0.0.0 \
+--requirepass 123456 \
 --protected-mode no \
 --slave-read-only yes \
 --slaveof $master_IP 6379 \
+--masterauth 123456 \

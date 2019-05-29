@@ -1,11 +1,10 @@
 defmodule Redis.Cache.Service do
   require Logger
   import Redix.URI
-  @redis_url "redis://localhost:7001/"
-
+  @password  "123456"
 
   def redis_select(urls_list) do
-    urls_list=["redis://localhost:7001/","redis://localhost:7002/","redis://localhost:7003/"]
+    urls_list=["redis://:#{@password}@localhost:7001/1","redis://:#{@password}@localhost:7002/1","redis://:#{@password}@localhost:7003/1"]
     Enum.reduce(urls_list,%{},fn url , acc->
       info = redis_replication(url)
       role = info["role"]
