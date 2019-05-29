@@ -29,11 +29,11 @@ defmodule RedisWeb.RedisController do
     Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
     #{inspect meta}"
 
-    w = Redis.Cache.Service.file_del(meta["id"])
+    {_,w} = Redis.Cache.Service.file_del(meta["id"])
     Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
     #{inspect w}"
 
-    conn |> json(ok(%{}))
+    conn |> json(ok(w))
   end
 
 

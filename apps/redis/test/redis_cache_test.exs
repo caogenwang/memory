@@ -9,7 +9,7 @@ defmodule Redis.Repo.Query do
   #   table = "file_metas"
   #   [w] = Service.query(table)
   #   meta = Poison.decode!(Map.get(w,:meta))
-  #   second = 600
+  #   second = 6000
   #   w = Redis.Cache.Service.file_set(meta,second)
   #   Logger.warn "w:#{inspect w}"
   # end
