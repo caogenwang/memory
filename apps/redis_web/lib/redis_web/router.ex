@@ -30,7 +30,7 @@ defmodule RedisWeb.Router do
     post "/key_value_set",RedisController,:key_value_set
     get "/key_value_get",RedisController,:key_value_get
     get "/key_value_del",RedisController,:key_value_del
-    get "/key_value_update",RedisController,:key_value_update
+    post "/key_value_update",RedisController,:key_value_update
   end
 
   # Other scopes may use custom stacks.
