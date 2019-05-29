@@ -1,0 +1,1 @@
+sentinel.conf文件的配置最开始最好保罗一分，以为在sentinel重启之后，sentinel.conf会记录之前的主备状态，可能导致监控不正确。当redis的服务器重新启动后，重新配置最原始的sentinel.conf

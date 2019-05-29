@@ -34,3 +34,4 @@ redis:3.2 \
 --bind 0.0.0.0 \
 --requirepass 123456 \
 --protected-mode no \
+--masterauth 123456 \
