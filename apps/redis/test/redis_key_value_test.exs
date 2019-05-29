@@ -4,17 +4,17 @@ defmodule Redis.Repo.Query do
   use Redis.DataCase
   use ExUnit.Case, async: true
 
-  test "set" do
-    values = %{
-      "key" => "docin",
-      "location" => "beijing",
-      "type" => "internet",
-      "employee" => 50,
-      "expire" => 10
-    }
-    what = Redis.Cache.Service.key_value_set(values)
-    Logger.warn "what:#{inspect what}"
-  end
+  # test "set" do
+  #   values = %{
+  #     "key" => "docin",
+  #     "location" => "beijing",
+  #     "type" => "internet",
+  #     "employee" => 50,
+  #     "expire" => 10
+  #   }
+  #   what = Redis.Cache.Service.key_value_set(values)
+  #   Logger.warn "what:#{inspect what}"
+  # end
 
   # test "get" do
   #   values = %{
@@ -60,7 +60,7 @@ defmodule Redis.Repo.Query do
                   "host_name" => "dfs_store_001", "id" => "64135088",
                   "page_count" => "6", "version" => "1.2", "width" => "595.5",
                   "zip_size" => "680656",
-                  "expire" => 10}
+                  "expire" => 0}
 
        what = HTTPoison.post(addKeyURL, Poison.encode!(meta_map), [{"Content-Type", "application/json"}])
        # addFileURL = "http://localhost:4000/info_set?id=64135088&converted_by=convert_worker&host_name=dfs_store_001"

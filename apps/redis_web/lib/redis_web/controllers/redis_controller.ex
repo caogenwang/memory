@@ -63,11 +63,11 @@ defmodule RedisWeb.RedisController do
     Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
     #{inspect values}"
 
-    w = Redis.Cache.Service.key_value_del(values)
+    {_,w} = Redis.Cache.Service.key_value_del(values)
     Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
     #{inspect w}"
 
-    conn |> json(ok(%{}))
+    conn |> json(ok(w))
   end
 
   def key_value_update(conn, %{"key"=>key}=values) do
