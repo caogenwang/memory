@@ -8,12 +8,19 @@ defmodule Redis.Application do
   for use in channels, controllers, and elsewhere.
   """
   use Application
-
+  @password  "123456"
+  @redis_urls [
+    "redis://:#{@password}@localhost:7001/1",
+    "redis://:#{@password}@localhost:7002/1",
+    "redis://:#{@password}@localhost:7003/1"
+  ]
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
+
     Supervisor.start_link([
       supervisor(Redis.Repo, []),
+      supervisor(Redis.Start, [@redis_urls]),
     ], strategy: :one_for_one, name: Redis.Supervisor)
   end
 end

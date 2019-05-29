@@ -21,7 +21,7 @@ defmodule RedisWeb.RedisController do
     Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
     #{inspect w}"
 
-    conn |> json(ok(%{}))
+    conn |> json(ok(w))
   end
 
   def info_del(conn, %{"id" => id} = meta) do
@@ -29,9 +29,9 @@ defmodule RedisWeb.RedisController do
     Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
     #{inspect meta}"
 
-    # w = Redis.Cache.Service.file_del(meta["id"])
-    # Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
-    # #{inspect w}"
+    w = Redis.Cache.Service.file_del(meta["id"])
+    Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
+    #{inspect w}"
 
     conn |> json(ok(%{}))
   end
@@ -56,7 +56,7 @@ defmodule RedisWeb.RedisController do
     Logger.warn "file: #{inspect Path.basename(__ENV__.file)}  line: #{__ENV__.line}
     #{inspect w}"
 
-    conn |> json(ok(%{}))
+    conn |> json(ok(w))
   end
 
   def key_value_del(conn, %{"key"=>key}=values) do

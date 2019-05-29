@@ -13,8 +13,8 @@ defmodule RedisWeb.HelloController do
     end
     def hello(conn, msg) do
       conn |> json(ok(%{meta: %{
-          version: to_string(Application.spec(:RedisWeb,:vsn))
-      }}))
+        version: to_string(Application.spec(:redis_web,:vsn))
+    }}))
     end
 
 end

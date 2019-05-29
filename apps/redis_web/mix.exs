@@ -1,10 +1,12 @@
 defmodule RedisWeb.Mixfile do
   use Mix.Project
 
+  @version String.trim(File.read!("../../_build/#{Mix.env}/version"))
+
   def project do
     [
       app: :redis_web,
-      version: "0.0.1",
+      version: @version,
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -24,7 +26,7 @@ defmodule RedisWeb.Mixfile do
   def application do
     [
       mod: {RedisWeb.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools,:redis]
     ]
   end
 

@@ -6,7 +6,7 @@ echo "CurrentDir=$CurrentDir"
 
 source $CurrentDir/../$ENV_FILE
 
-sh $CurrentDir/build.$env.sh
+# sh $CurrentDir/build.$env.sh
 
 Local_IP="$( /sbin/ifconfig -a|grep inet|grep -i 192.168|grep -v inet6|awk '{print $2}'|tr -d "addr:" )"
 echo "Local_IP=$Local_IP"
@@ -35,7 +35,7 @@ mkdir -p $WorkDir
 
 docker stop $Docker_name
 docker rm $Docker_name
-docker run -d \
+docker run -it \
 --name $Docker_name \
 --restart=always \
 --ulimit core=0 \

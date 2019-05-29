@@ -2,27 +2,32 @@ defmodule Redis.Cache.Service do
   require Logger
   import Redix.URI
   @password  "123456"
+  @redis_urls [
+    "redis://:#{@password}@localhost:7001/1",
+    "redis://:#{@password}@localhost:7002/1",
+    "redis://:#{@password}@localhost:7003/1"
+  ]
+  def redis_select() do
+    Enum.reduce(@redis_urls,%{},fn url , acc->
 
-  def redis_select(urls_list) do
-    urls_list=["redis://:#{@password}@localhost:7001/1","redis://:#{@password}@localhost:7002/1","redis://:#{@password}@localhost:7003/1"]
-    Enum.reduce(urls_list,%{},fn url , acc->
-      info = redis_replication(url)
+      redis_name = String.to_atom(url)
+      conn = Process.whereis(redis_name)
+
+      info = redis_replication(conn)
       role = info["role"]
 
       case role do
-        "master" -> Map.put(acc,"master",url)
-        "slave"  -> Map.put(acc,"slave",url)
+        "master" -> Map.put(acc,"master",conn)
+        "slave"  -> Map.put(acc,"slave",conn)
                     if info["master_link_status"] == "up" do
-                      Map.put(acc,"slave",url)
+                      Map.put(acc,"slave",conn)
                     end
           _      ->{:error}
       end
 
     end)
   end
-  def redis_replication(redis_url) do
-    redis_name = String.to_atom(redis_url)
-    {:ok, conn} = Redix.start_link(redis_url, name: redis_name)
+  def redis_replication(conn) do
     {:ok, info} = Redix.command(conn,["INFO","Replication"])
     info
     |> String.split("\r\n")
@@ -57,11 +62,6 @@ defmodule Redis.Cache.Service do
     what = Redix.command(conn, cmd)
   end
 
-  def start_link(redis_url) do
-    {:ok, conn} = Redix.start_link(redis_url, name: :redix)
-    conn
-  end
-
   def start_link(redis_url,port,password) do
     Redix.start_link(host: redis_url, port: port, password: password)
   end
@@ -69,23 +69,21 @@ defmodule Redis.Cache.Service do
   def file_set(param,second \\ 0) do
     key = param["id"]
     value = Poison.encode!(param)
-    url = redis_select([])
-    Logger.warn "url:#{inspect url["master"]}"
-    conn = start_link(url["master"])
+    conns = redis_select()
+    Logger.warn "conn:#{inspect conns["master"]}"
     Logger.warn "key:#{inspect key}"
     Logger.warn "value:#{inspect value}"
-    what = Redix.command(conn, ["SET", "#{key}","#{value}"])
+    what = Redix.command(conns["master"], ["SET", "#{key}","#{value}"])
     if second != 0 do
-      expire_time(conn,"#{key}",second)
+      expire_time(conns["master"],"#{key}",second)
     end
 
   end
 
   def file_get(id) do
-    url = redis_select([])
-    Logger.warn "url:#{inspect url["slave"]}"
-    conn = start_link(url["slave"])
-    {_,meta} = Redix.command(conn, ["GET", "#{id}"])
+    conns = redis_select()
+    Logger.warn "url:#{inspect conns["slave"]}"
+    {_,meta} = Redix.command(conns["slave"], ["GET", "#{id}"])
     case meta do
       nil -> nil
       _   -> Poison.decode!(meta)
@@ -105,23 +103,21 @@ defmodule Redis.Cache.Service do
         acc++[key,Map.get(param,key)]
     end)
     cmd = ["HMSET","#{hash_key}"] ++ value
-    url = redis_select([])
-    Logger.warn "url:#{inspect url["master"]}"
-    conn = start_link(url["master"])
-    what = Redix.command(conn, cmd)
+    conns = redis_select()
+    Logger.warn "url:#{inspect conns["master"]}"
+    what = Redix.command(conns["master"], cmd)
 
     if second != 0 do
-      expire_time(conn,"#{hash_key}",second)
+      expire_time(conns["master"],"#{hash_key}",second)
     end
 
   end
 
   def file_hget(id,keys) when is_list(keys) do
     cmd = ["HMGET","#{id}"] ++ keys
-    url = redis_select([])
-    Logger.warn "url:#{inspect url["slave"]}"
-    conn = start_link(url["slave"])
-    {_,result} = Redix.command(conn, cmd)
+    conns = redis_select()
+    Logger.warn "url:#{inspect conns["slave"]}"
+    {_,result} = Redix.command(conns["slave"], cmd)
     case result do
       nil -> nil
       _   ->assemble(result,keys)
@@ -138,10 +134,9 @@ defmodule Redis.Cache.Service do
 
   def file_hget_all(id) do
     cmd = ["HGETALL"] ++ [id]
-    url = redis_select([])
-    Logger.warn "url:#{inspect url["slave"]}"
-    conn = start_link(url["slave"])
-    {_,result} = Redix.command(conn, cmd)
+    conns = redis_select()
+    Logger.warn "url:#{inspect conns["slave"]}"
+    {_,result} = Redix.command(conns["slave"], cmd)
     case result do
       nil -> nil
       _   ->assemble(result)
@@ -158,10 +153,9 @@ defmodule Redis.Cache.Service do
   def file_del(id) do
     key = id
     cmd = ["DEL","#{key}"]
-    url = redis_select([])
-    Logger.warn "url:#{inspect url["master"]}"
-    conn = start_link(url["master"])
-    what = Redix.command(conn, cmd)
+    conns = redis_select()
+    Logger.warn "url:#{inspect conns["master"]}"
+    what = Redix.command(conns["master"], cmd)
   end
 
   def file_multi_set(param_list,second \\ 0) when is_list(param_list) do
@@ -195,10 +189,9 @@ defmodule Redis.Cache.Service do
 
     Logger.warn "cmd_all:#{inspect cmd_all}"
 
-    url = redis_select([])
-    Logger.warn "url:#{inspect url["master"]}"
-    conn = start_link(url["master"])
-    what = Redix.pipeline!(conn, cmd_all)
+    conns = redis_select()
+    Logger.warn "url:#{inspect conns["master"]}"
+    what = Redix.pipeline!(conns["master"], cmd_all)
   end
 
 def key_value_set(%{"key"=>key,"expire"=>time}=values) do
@@ -226,12 +219,11 @@ def key_value_update(%{"key"=>key}=values) do
          k != "key"
      end)
      Logger.warn "keys_value:#{inspect keys_value}"
-      url = redis_select([])
-      Logger.warn "url:#{inspect url["master"]}"
-      conn = start_link(url["master"])
+      conns = redis_select()
+      Logger.warn "url:#{inspect conns["master"]}"
       Enum.map(keys_value,fn key_value ->
         cmd=["HSET",key,key_value,Map.get(values,key_value)]
-        what = Redix.command(conn, cmd)
+        what = Redix.command(conns["master"], cmd)
         Logger.warn "what:#{inspect what}"
     end)
 end
@@ -254,13 +246,12 @@ def key_value_hset(k,values,second \\ 0) do
       acc++[key,Map.get(values,key)]
       end)
   cmd = ["HMSET","#{k}"] ++ value
-  url = redis_select([])
-  Logger.warn "url:#{inspect url["master"]}"
-  conn = start_link(url["master"])
-  what = Redix.command(conn, cmd)
+  conns = redis_select()
+  Logger.warn "url:#{inspect conns["master"]}"
+  what = Redix.command(conns["master"], cmd)
 
   if second != 0 do
-    expire_time(conn,"#{k}",second)
+    expire_time(conns["master"],"#{k}",second)
   end
 
 end
