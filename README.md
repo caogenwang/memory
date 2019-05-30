@@ -12,6 +12,8 @@ HEX_HTTP_CONCURRENCY=1 HEX_HTTP_TIMEOUT=120 mix deps.get
 **mix.exs添加依赖(之前一直卡在了没有添加依赖:mariaex上，实例参考https://segmentfault.com/a/1190000005016957#articleHeader10)**
 mix ecto.gen.migration add_file_metas -r Redis.Repo
 mix ecto.migrate -r Redis.Repo
+运行时增加变量的方法
+SERVER_NAME=yansen_cache ENV mix phx.server 
 
 **redis的相关配置步骤**
 1、首先创建conf的相关文件夹，将conf文件根据需求修改，然后放入到对应的文件夹下
